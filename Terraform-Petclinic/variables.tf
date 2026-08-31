@@ -1,6 +1,6 @@
 variable "location" {
   type        = string
-  default     = "westeurope"
+  default     = "west US 2"
   description = "Primary Azure deployment region."
 }
 
