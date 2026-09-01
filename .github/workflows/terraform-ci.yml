@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ main ]
 
-# Global permissions fallback
 permissions:
   id-token: write
   contents: read
@@ -31,7 +30,6 @@ jobs:
     name: "Terraform Lint & Plan"
     needs: checkov-iac-scan
     runs-on: ubuntu-latest
-    # Explicitly enforce OIDC token minting permissions at the job level
     permissions:
       id-token: write
       contents: read
@@ -41,6 +39,18 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Inspect OIDC Token Claims (Debug)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken('sts.amazonaws.com');
+            const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+            console.log('=== GITHUB OIDC CLAIMS ===');
+            console.log('aud:', payload.aud);
+            console.log('iss:', payload.iss);
+            console.log('sub:', payload.sub);
+            console.log('==========================');
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
