@@ -14,10 +14,11 @@ resource "aws_db_subnet_group" "main" {
 }
 
 resource "aws_db_instance" "mysql" {
-  # checkov:skip=CKV_AWS_293: Deletion protection disabled for ephemeral lab environment destroyability
+  # checkov:skip=CKV_AWS_293: Deletion protection disabled for lab destroyability
   # checkov:skip=CKV_AWS_118: Enhanced monitoring disabled to avoid extra CloudWatch costs
-  # checkov:skip=CKV_AWS_161: IAM database authentication disabled for basic credential auth
+  # checkov:skip=CKV_AWS_161: IAM database authentication disabled for simple app auth
   # checkov:skip=CKV_AWS_157: Multi-AZ disabled to remain within AWS Free Tier limits
+  # checkov:skip=CKV2_AWS_60: Copy tags to snapshot enabled below
 
   allocated_storage               = 20
   max_allocated_storage           = 100
@@ -31,9 +32,8 @@ resource "aws_db_instance" "mysql" {
   skip_final_snapshot             = true
   auto_minor_version_upgrade      = true
   storage_encrypted               = true
+  copy_tags_to_snapshot           = true
   enabled_cloudwatch_logs_exports = ["error", "general", "slowquery"]
 }
 
-output "db_endpoint" {
-  value = aws_db_instance.mysql.endpoint
-}
+output "db_endpoint" { value = aws_db_instance.mysql.endpoint }
