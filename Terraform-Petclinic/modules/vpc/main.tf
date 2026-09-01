@@ -1,8 +1,9 @@
 
 variable "environment" { type = string }
 
-# checkov:skip=CKV2_AWS_11: VPC Flow Logs disabled to prevent CloudWatch Ingestion and S3 storage costs
 resource "aws_vpc" "main" {
+  # checkov:skip=CKV2_AWS_11: VPC Flow Logs disabled to prevent CloudWatch Ingestion and S3 storage costs
+
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
@@ -12,8 +13,8 @@ resource "aws_vpc" "main" {
   }
 }
 
-# checkov:skip=CKV2_AWS_12: Default security group management skipped in lab environment
 resource "aws_default_security_group" "default" {
+  # checkov:skip=CKV2_AWS_12: Default security group management skipped in lab environment
   vpc_id = aws_vpc.main.id
 }
 

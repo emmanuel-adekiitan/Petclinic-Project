@@ -20,6 +20,7 @@ jobs:
           framework: terraform
           output_format: cli
           soft_fail: false
+          skip_check: CKV2_AWS_11
 
   terraform-ci:
     name: "Terraform Lint & Plan"
