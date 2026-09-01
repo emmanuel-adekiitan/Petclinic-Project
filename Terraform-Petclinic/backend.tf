@@ -1,9 +1,10 @@
 terraform {
   required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 5.80.0"
     }
   }
 
@@ -17,6 +18,6 @@ terraform {
 }
 
 provider "aws" {
-  region  = var.aws_region
-  profile = "free-tier"
+  region = var.aws_region
+  # profile = "free-tier"  # Disabled for GitHub Actions OIDC compatibility
 }
