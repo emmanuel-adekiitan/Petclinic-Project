@@ -1,19 +1,15 @@
-output "resource_group_name" {
-  value = azurerm_resource_group.rg.name
+output "vpc_id" {
+  value = module.vpc.vpc_id
 }
 
-output "aks_cluster_name" {
-  value = module.aks.cluster_name
+output "eks_cluster_endpoint" {
+  value = module.eks.cluster_endpoint
 }
 
-output "acr_login_server" {
-  value = module.acr.login_server
+output "ecr_repository_url" {
+  value = module.ecr.repository_url
 }
 
-output "mysql_server_fqdn" {
-  value = module.mysql.server_fqdn
-}
-
-output "keyvault_uri" {
-  value = module.keyvault.vault_uri
+output "rds_endpoint" {
+  value = module.rds.db_endpoint
 }

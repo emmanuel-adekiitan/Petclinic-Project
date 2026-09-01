@@ -1,17 +1,17 @@
-variable "location" {
+variable "aws_region" {
   type        = string
-  default     = "west US 2"
-  description = "Primary Azure deployment region."
+  default     = "ca-central-1"
+  description = "Target AWS region."
 }
 
-variable "resource_group_name" {
+variable "environment" {
   type        = string
-  default     = "rg-petclinic-prod"
-  description = "Name of the target Azure Resource Group."
+  default     = "prod"
+  description = "Deployment environment name."
 }
 
 variable "db_password" {
   type        = string
   sensitive   = true
-  description = "Administrator password for Azure MySQL Flexible Server."
+  description = "Administrator password for Amazon RDS MySQL."
 }

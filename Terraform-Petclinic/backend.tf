@@ -1,24 +1,22 @@
 terraform {
   required_version = ">= 1.5.0"
   required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 3.90"
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
   }
-  # Uncomment after creating state storage in Azure
-  # backend "azurerm" {
-  #   resource_group_name  = "rg-terraform-state"
-  #   storage_account_name = "stpetclinictfstate"
-  #   container_name       = "tfstate"
-  #   key                  = "petclinic-prod.tfstate"
-  # }
+
+  backend "s3" {
+    bucket         = "petclinic-tfstate-s3-20588"
+    key            = "petclinic/prod/terraform.tfstate"
+    region         = "ca-central-1"
+    dynamodb_table = "petclinic-tf-locks"
+    encrypt        = true
+  }
 }
 
-provider "azurerm" {
-  features {
-    key_vault {
-      purge_soft_delete_on_destroy = true
-    }
-  }
+provider "aws" {
+  region  = var.aws_region
+  profile = "free-tier"
 }

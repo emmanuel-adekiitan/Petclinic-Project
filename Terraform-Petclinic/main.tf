@@ -1,50 +1,31 @@
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
+module "vpc" {
+  source      = "./modules/vpc"
+  aws_region  = var.aws_region
+  environment = var.environment
 }
 
-module "vnet" {
-  source              = "./modules/vnet"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  vnet_name           = "vnet-petclinic-prod"
+module "ecr" {
+  source      = "./modules/ecr"
+  environment = var.environment
 }
 
-module "acr" {
-  source              = "./modules/acr"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  acr_name            = "acrpetclinicprod"
+module "eks" {
+  source             = "./modules/eks"
+  environment        = var.environment
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
 }
 
-module "aks" {
-  source              = "./modules/aks"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  cluster_name        = "aks-petclinic-prod"
-  aks_subnet_id       = module.vnet.aks_subnet_id
+module "rds" {
+  source             = "./modules/rds"
+  environment        = var.environment
+  db_password        = var.db_password
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
 }
 
-resource "azurerm_role_assignment" "aks_acr_attach" {
-  principal_id                     = module.aks.kubelet_identity_object_id
-  role_definition_name             = "AcrPull"
-  scope                            = module.acr.acr_id
-  skip_service_principal_aad_check = true
-}
-
-module "mysql" {
-  source              = "./modules/mysql"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  server_name         = "mysql-petclinic-prod"
-  admin_username      = "petclinicadmin"
-  admin_password      = var.db_password
-  mysql_subnet_id     = module.vnet.mysql_subnet_id
-}
-
-module "keyvault" {
-  source              = "./modules/keyvault"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  keyvault_name       = "kv-petclinic-prod"
+module "secretsmanager" {
+  source      = "./modules/secretsmanager"
+  environment = var.environment
+  db_password = var.db_password
 }
