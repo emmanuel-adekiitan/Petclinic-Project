@@ -1,6 +1,5 @@
 module "vpc" {
   source      = "./modules/vpc"
-  aws_region  = var.aws_region
   environment = var.environment
 }
 
@@ -10,10 +9,9 @@ module "ecr" {
 }
 
 module "eks" {
-  source             = "./modules/eks"
-  environment        = var.environment
-  vpc_id             = module.vpc.vpc_id
-  private_subnet_ids = module.vpc.private_subnet_ids
+  source      = "./modules/eks"
+  environment = var.environment
+  subnet_ids  = module.vpc.private_subnet_ids
 }
 
 module "rds" {
