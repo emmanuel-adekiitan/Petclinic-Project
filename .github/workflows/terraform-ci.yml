@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
 
-# Required for GitHub OIDC Token Generation
+# Global permissions fallback
 permissions:
   id-token: write
   contents: read
@@ -31,6 +31,10 @@ jobs:
     name: "Terraform Lint & Plan"
     needs: checkov-iac-scan
     runs-on: ubuntu-latest
+    # Explicitly enforce OIDC token minting permissions at the job level
+    permissions:
+      id-token: write
+      contents: read
     defaults:
       run:
         working-directory: ./Terraform-Petclinic
@@ -46,7 +50,7 @@ jobs:
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::128793514564:role/AllowGithub  # Replace with your IAM Role ARN
+          role-to-assume: arn:aws:iam::128793514564:role/AllowGithub
           aws-region: ca-central-1
 
       - name: Terraform Format Check
