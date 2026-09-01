@@ -15,11 +15,12 @@ resource "aws_iam_role" "eks_cluster" {
   })
 }
 
-# checkov:skip=CKV_AWS_37: Control plane logging disabled to minimize CloudWatch cost
-# checkov:skip=CKV_AWS_38: Public endpoint access required for deployment runner connection
-# checkov:skip=CKV_AWS_39: Public cluster endpoint enabled for external CLI management
-# checkov:skip=CKV_AWS_58: KMS secrets envelope encryption disabled to avoid KMS key costs
 resource "aws_eks_cluster" "main" {
+  # checkov:skip=CKV_AWS_37: Control plane logging disabled to minimize CloudWatch costs
+  # checkov:skip=CKV_AWS_38: Public endpoint access required for deployment runner connection
+  # checkov:skip=CKV_AWS_39: Public cluster endpoint enabled for external CLI management
+  # checkov:skip=CKV_AWS_58: KMS secrets envelope encryption disabled to avoid KMS key costs
+
   name     = "eks-petclinic-${var.environment}"
   role_arn = aws_iam_role.eks_cluster.arn
 

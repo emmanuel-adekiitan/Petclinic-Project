@@ -1,8 +1,9 @@
 
 variable "environment" { type = string }
 
-# checkov:skip=CKV_AWS_136: KMS encryption skipped in favor of default AES256 to minimize KMS key costs
 resource "aws_ecr_repository" "app" {
+  # checkov:skip=CKV_AWS_136: KMS encryption skipped in favor of default AES256 to minimize KMS key costs
+
   name                 = "ecr-petclinic-${var.environment}"
   image_tag_mutability = "IMMUTABLE"
 
