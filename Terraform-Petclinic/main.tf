@@ -23,7 +23,7 @@ module "rds" {
   private_subnet_ids = module.vpc.private_subnet_ids
 
   # Pass legacy subnet ID to retain active RDS ENI during migration
-  legacy_subnet_ids  = ["subnet-0e50f88afc7f206d1"]
+  legacy_subnet_ids = ["subnet-0e50f88afc7f206d1"]
 }
 
 module "secretsmanager" {

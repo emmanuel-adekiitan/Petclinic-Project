@@ -49,7 +49,7 @@ resource "aws_db_instance" "mysql" {
   enabled_cloudwatch_logs_exports = ["error", "general", "slowquery"]
 
   # Prevents public IP assignment while keeping NAT Gateway costs at $0
-  publicly_accessible             = false
+  publicly_accessible = false
 }
 
 output "db_endpoint" { value = aws_db_instance.mysql.endpoint }

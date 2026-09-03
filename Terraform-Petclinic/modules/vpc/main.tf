@@ -29,8 +29,8 @@ resource "aws_subnet" "public" {
   }
 }
 resource "aws_subnet" "private" {
-  count             = 2
-  vpc_id            = aws_vpc.main.id
+  count  = 2
+  vpc_id = aws_vpc.main.id
   # Index 0 stays on active 10.0.11.0/24; Index 1 takes 10.0.20.0/24 to avoid 10.0.2.0/24 public overlap
   cidr_block        = count.index == 0 ? "10.0.11.0/24" : "10.0.20.0/24"
   availability_zone = count.index == 0 ? "ca-central-1b" : "ca-central-1a"
@@ -42,14 +42,14 @@ resource "aws_subnet" "private" {
   }
 }
 
-output "vpc_id" { 
-  value = aws_vpc.main.id 
+output "vpc_id" {
+  value = aws_vpc.main.id
 }
 
-output "public_subnet_ids" { 
-  value = aws_subnet.public[*].id 
+output "public_subnet_ids" {
+  value = aws_subnet.public[*].id
 }
 
-output "private_subnet_ids" { 
-  value = aws_subnet.private[*].id 
+output "private_subnet_ids" {
+  value = aws_subnet.private[*].id
 }
