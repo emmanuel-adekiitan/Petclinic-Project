@@ -48,7 +48,7 @@ jobs:
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::128793514564:role/AllowGithub
+          role-to-assume: arn:aws:iam::128793514564:role/Allow-Peclinic-repo
           aws-region: ca-central-1
 
       - name: Terraform Format Check
