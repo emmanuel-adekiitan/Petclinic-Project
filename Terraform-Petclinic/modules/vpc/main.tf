@@ -1,13 +1,11 @@
 variable "environment" { type = string }
 
-# Fetch available AZs dynamically
 data "aws_availability_zones" "available" {
   state = "available"
 }
 
 resource "aws_vpc" "main" {
   # checkov:skip=CKV2_AWS_11: VPC Flow Logs disabled to prevent CloudWatch Ingestion and S3 storage costs
-
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
@@ -40,7 +38,8 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   count             = 2
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.${count.index + 20}.0/24" # Changed from 10 to 20: 10.0.20.0/24 & 10.0.21.0/24
+  # 10.0.2.0/24 matches original private subnet; 10.0.3.0/24 creates the second AZ subnet cleanly
+  cidr_block        = "10.0.${count.index + 2}.0/24" 
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
