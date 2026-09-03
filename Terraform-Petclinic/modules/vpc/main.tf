@@ -15,6 +15,7 @@ resource "aws_default_security_group" "default" {
 }
 
 resource "aws_subnet" "public" {
+  # checkov:skip=CKV_AWS_130: Public subnets require public IP assignment for internet routing without a NAT gateway
   count                   = 2
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.${count.index + 1}.0/24" # 10.0.1.0/24 & 10.0.2.0/24
@@ -27,7 +28,6 @@ resource "aws_subnet" "public" {
     "kubernetes.io/cluster/eks-petclinic-prod" = "shared"
   }
 }
-
 resource "aws_subnet" "private" {
   count             = 2
   vpc_id            = aws_vpc.main.id
