@@ -1,5 +1,9 @@
-
 variable "environment" { type = string }
+
+# Fetch available AZs dynamically
+data "aws_availability_zones" "available" {
+  state = "available"
+}
 
 resource "aws_vpc" "main" {
   # checkov:skip=CKV2_AWS_11: VPC Flow Logs disabled to prevent CloudWatch Ingestion and S3 storage costs
@@ -20,27 +24,40 @@ resource "aws_default_security_group" "default" {
 
 resource "aws_subnet" "public" {
   # checkov:skip=CKV_AWS_130: Public IP assignment required for worker node internet access and ALB ingress
-
+  count                   = 2
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.1.0/24"
+  cidr_block              = "10.0.${count.index + 1}.0/24" # 10.0.1.0/24 & 10.0.2.0/24
   map_public_ip_on_launch = true
-  availability_zone       = "ca-central-1a"
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "subnet-petclinic-public-${var.environment}"
+    Name                                           = "subnet-petclinic-public-${count.index + 1}-${var.environment}"
+    "kubernetes.io/role/elb"                       = "1" # Required for EKS Public Load Balancers
+    "kubernetes.io/cluster/eks-petclinic-prod"     = "shared"
   }
 }
 
 resource "aws_subnet" "private" {
+  count             = 2
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.2.0/24"
-  availability_zone = "ca-central-1b"
+  cidr_block        = "10.0.${count.index + 10}.0/24" # 10.0.10.0/24 & 10.0.11.0/24
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "subnet-petclinic-private-${var.environment}"
+    Name                                           = "subnet-petclinic-private-${count.index + 1}-${var.environment}"
+    "kubernetes.io/role/internal-elb"              = "1" # Required for EKS Internal Load Balancers
+    "kubernetes.io/cluster/eks-petclinic-prod"     = "shared"
   }
 }
 
-output "vpc_id" { value = aws_vpc.main.id }
-output "public_subnet_ids" { value = [aws_subnet.public.id] }
-output "private_subnet_ids" { value = [aws_subnet.private.id] }
+output "vpc_id" { 
+  value = aws_vpc.main.id 
+}
+
+output "public_subnet_ids" { 
+  value = aws_subnet.public[*].id 
+}
+
+output "private_subnet_ids" { 
+  value = aws_subnet.private[*].id 
+}
